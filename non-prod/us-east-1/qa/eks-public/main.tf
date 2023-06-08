@@ -36,17 +36,16 @@ terraform {
 
 locals {
   aws_region = "us-east-2"
-  aws_eks_cluster_name = "aws-blueprint"
+  aws_eks_cluster_name = "qa-eks-use2-pace"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # MODULE PARAMETERS
-# These are the variables we have to pass in to use the module. This defines the parameters that are common across all
-# environments.
+# These are the variables we have to pass in to use the module.
 # ---------------------------------------------------------------------------------------------------------------------
 module "eks-public" {
 
-  source = "git@github.com:sujith-es/infrastructure-modules.git//aws-eks-blueprint?ref=v1.0.0"
+   source = "git@github.com:sujith-es/infrastructure-modules.git//aws-eks-blueprint?ref=v1.0.0"
   # source = "../../../../../infrastructure-modules/aws-eks-blueprint"
 
 
@@ -57,7 +56,7 @@ module "eks-public" {
   cluster_endpoint_public_access = true
   resource_tags = {
     project     = "project-alpha",
-    environment = "dev"
+    environment = "qa"
   }
   instance_types            = ["t3a.2xlarge"]
   managed_node_min_size     = 3
@@ -65,10 +64,16 @@ module "eks-public" {
   managed_node_desired_size = 3
 
 
-  # AWS EKS Blueprint Add-ons
+  # AWS EKS Blueprint Add-ons. aws_ebs_csi_driver, aws_load_balancer_controller
   enable_argocd = true
   enable_karpenter = true
   enable_argo_rollouts = true
+
+  # **** BELOW are enabled by Default. DO NOT CHANGE ******
+  # enable_amazon_eks_aws_ebs_csi_driver = true
+  # enable_aws_load_balancer_controller  = true
+  # enable_cert_manager                  = true  
+  # enable_metrics_server                = true  
 
   # Admin Team and Users to add to admin IAM group and in K8s aws-auth
   admin_team_name = "pace-eks-admin-team"
